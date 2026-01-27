@@ -18,7 +18,6 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
 
     return [
       "  public typealias RawValue = \(raw: typeName)",
-      "  public let rawValue: RawValue",
       """
         public required init?(rawValue: RawValue) {
           self.rawValue = rawValue
