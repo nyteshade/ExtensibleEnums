@@ -4,7 +4,7 @@ import Foundation
 open class ExtensibleEnum: NSObject {
   public var rawValue: Any
 
-  public required init?(rawValue: Any) {
+  public init?(rawValue: Any) {
     self.rawValue = rawValue
     super.init()
   }
