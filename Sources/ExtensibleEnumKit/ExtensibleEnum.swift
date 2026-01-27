@@ -1,10 +1,10 @@
 import Foundation
 
-@objc @objcMembers
+@objc
 open class ExtensibleEnum: NSObject {
-  public var rawValue: Any
+  public let rawValue: Any
 
-  public nonisolated init?(rawValue: Any) {
+  @objc public nonisolated required init?(rawValue: Any) {
     self.rawValue = rawValue
     super.init()
   }
