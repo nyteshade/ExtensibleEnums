@@ -17,13 +17,13 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
     let typeName = argument.description.replacingOccurrences(of: ".self", with: "").trimmingCharacters(in: .whitespaces)
 
     return [
-      "public typealias RawValue = \(raw: typeName)",
-      "public let rawValue: RawValue",
+      "  public typealias RawValue = \(raw: typeName)",
+      "  public let rawValue: RawValue",
       """
-      public required init?(rawValue: RawValue) {
-        self.rawValue = rawValue
-        super.init(rawValue: rawValue)
-      }
+        public required init?(rawValue: RawValue) {
+          self.rawValue = rawValue
+          super.init(rawValue: rawValue)
+        }
       """
     ]
   }
