@@ -1,13 +1,13 @@
 import Foundation
 
 // 1. Define a protocol to handle the generic extraction
-protocol ExtensibleEnumProtocol: RawRepresentable {
+public protocol ExtensibleEnumProtocol: RawRepresentable {
   static func allKeys() -> [String]
   static func allValues() -> [RawValue]
 }
 
 // 2. Implement the logic in a protocol extension
-extension ExtensibleEnumProtocol where Self: NSObject {
+public extension ExtensibleEnumProtocol where Self: NSObject {
   static func allKeys() -> [String] {
     allKeysAndValues().keys.sorted()
   }
