@@ -1,8 +1,8 @@
 import Foundation
 
 @objc @objcMembers
-open class ExtensibleEnum: NSObject {
-  public let rawValue: Any
+open class ExtensibleEnum: NSObject, RawRepresentable {
+  public let rawValue: RawValue
 
   public required init?(rawValue: Any) {
     self.rawValue = rawValue
