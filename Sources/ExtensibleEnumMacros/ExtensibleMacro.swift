@@ -19,7 +19,7 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
     return [
       "public typealias RawValue = \(raw: typeName)",
       """
-      public nonisolated required init?(rawValue: RawValue) {
+      public override nonisolated required init?(rawValue: RawValue) {
         self.rawValue = rawValue
         super.init(rawValue: rawValue)
       }
