@@ -53,7 +53,7 @@ public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
       // 4. Extract the value via KVC
       // KVC handles the dynamic lookup of both 'static let' and 'static var'
       // Use a do-catch or check respondsTo to avoid KVC exceptions if a key isn't KVC-compliant
-      if let value = self.value(forKey: name) as? RawValue {
+      if let value = self.value(forKey: name) {
         dict[name] = value
       }
     }
