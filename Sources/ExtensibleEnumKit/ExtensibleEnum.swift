@@ -186,15 +186,6 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
     return allKeysAndValues()[key]
   }
 
-  /// Enables subscript access from Objective-C.
-  ///
-  /// ```objc
-  /// Person *person = Workers[@"Brie"];
-  /// ```
-  @objc
-  open class func object(forKeyedSubscript key: String) -> Any? {
-    return allKeysAndValues()[key]
-  }
 
   /// Enumerates all cases, calling the block with each key and value.
   ///

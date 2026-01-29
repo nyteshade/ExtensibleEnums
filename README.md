@@ -201,10 +201,7 @@ NSDictionary<NSString *, id> *mapping = [StatusCode allKeysAndValues];
 // Get count
 NSUInteger count = StatusCode.count;
 
-// Subscript access (preferred)
-id value = StatusCode[@"ok"];
-
-// Or method-based lookup
+// Look up by case name
 id value = [StatusCode valueForCaseNamed:@"ok"];
 
 // Block-based enumeration with early exit
@@ -261,8 +258,7 @@ The base class providing core functionality:
 - `class var count: Int` - Number of defined cases
 
 **Objective-C Convenience:**
-- `Class[@"key"]` - Subscript access to look up value by case name
-- `class func value(forCaseNamed:) -> Any?` - Method-based lookup by case name
+- `class func value(forCaseNamed:) -> Any?` - Look up value by case name
 - `class func enumerateKeysAndValues(using:)` - Block-based enumeration with stop flag
 - `class func enumerateValues(using:)` - Block-based value enumeration with stop flag
 
