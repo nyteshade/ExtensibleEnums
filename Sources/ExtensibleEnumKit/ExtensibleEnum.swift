@@ -27,7 +27,7 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
 
   /// The underlying value (type-erased).
   @objc
-  public private(set) var rawValue: Any
+  public var rawValue: Any
 
   /// Creates a new instance with the given raw value.
   /// - Parameter rawValue: The underlying value to store.
