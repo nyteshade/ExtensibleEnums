@@ -31,7 +31,6 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
 
   /// Creates a new instance with the given raw value.
   /// - Parameter rawValue: The underlying value to store.
-  @objc
   public init(rawValue: Any) {
     self.rawValue = rawValue
     super.init()
