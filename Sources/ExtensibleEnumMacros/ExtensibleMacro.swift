@@ -24,6 +24,17 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
         super.init()
         self.rawValue = rawValue
       }
+
+      public var typedRawValue: RawValue {
+        return rawValue as! RawValue
+      }
+
+      /// Returns all status codes with concrete `RawValue` type.
+      public static func allTypedKeysAndValues() -> [String: RawValue] {
+        // Runtime introspection, then cast values
+        let untyped = (self as ExtensibleEnumProtocol.Type).allKeysAndValues()
+        return untyped.compactMapValues { $0 as? RawValue }
+      }
       """
     ]
   }
