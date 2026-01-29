@@ -1,5 +1,32 @@
 import Foundation
 
+// MARK: - Generally introspect an objc class
+
+fileprivate func getStaticPropertyNames(for cls: AnyClass) -> [String] {
+    var count: UInt32 = 0
+
+    // 1. Get the Metaclass (where static/class properties are stored)
+    guard let metaClass = object_getClass(cls) else { return [] }
+
+    // 2. Copy the property list from the Metaclass
+    guard let properties = class_copyPropertyList(metaClass, &count) else { return [] }
+
+    var propertyNames: [String] = []
+
+    for i in 0..<Int(count) {
+        let property = properties[i]
+
+        // 3. Convert the C-string name to a Swift String
+        let name = String(cString: property_getName(property))
+        propertyNames.append(name)
+    }
+
+    // 4. Free the memory allocated by the runtime
+    free(properties)
+
+    return propertyNames
+}
+
 // MARK: - Sequence Wrapper
 
 /// A sequence wrapper that enables functional iteration over extensible enum cases.
@@ -109,20 +136,20 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
       free(properties)
     }
 
-    let ignoredNames: Set<String> = [
+    var ignoredNames: Set<String> = [
       "hash",
       "superclass",
       "description",
-      "debugDescription",
-      "allKeys",
-      "allValues",
-      "allKeysAndValues",
-      "subscript",
-      "count",
-      "value",
-      "enumerateKeysAndValues",
-      "enumarateValues"
+      "debugDescription"
     ]
+
+    for propertyName in getStaticPropertyNames(for: NSObject.self) {
+      ignoredNames.update(with: propertyName)
+    }
+
+    for propertyName in getStaticPropertyNames(for: ExtensibleEnum.self) {
+      ignoredNames.update(with: propertyName)
+    }
 
     for i in 0..<Int(count) {
       let property = properties[i]
