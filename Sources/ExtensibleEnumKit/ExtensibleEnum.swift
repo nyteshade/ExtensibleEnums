@@ -27,6 +27,27 @@ fileprivate func getStaticPropertyNames(for cls: AnyClass) -> [String] {
     return propertyNames
 }
 
+fileprivate func getAllStaticSelectors(for cls: AnyClass) -> [String] {
+    var methodNames: [String] = []
+    var count: UInt32 = 0
+
+    // 1. Get the Metaclass (the "Class of the Class")
+    guard let metaClass = object_getClass(cls) else { return [] }
+
+    // 2. Copy the Method List from the Metaclass
+    guard let methods = class_copyMethodList(metaClass, &count) else { return [] }
+
+    for i in 0..<Int(count) {
+        let method = methods[i]
+        // 3. Get the selector name (e.g., "alloc" or "description")
+        let selector = method_getName(method)
+        methodNames.append(NSStringFromSelector(selector))
+    }
+
+    free(methods)
+    return methodNames.sorted()
+}
+
 // MARK: - Sequence Wrapper
 
 /// A sequence wrapper that enables functional iteration over extensible enum cases.
@@ -137,11 +158,9 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
     }
 
     let listOfNames = (
-      getStaticPropertyNames(for: NSObject.self) +
-      getStaticPropertyNames(for: ExtensibleEnum.self)
+      getAllStaticSelectors(for: NSObject.self) +
+      getAllStaticSelectors(for: ExtensibleEnum.self)
     )
-
-    print(listOfNames)
 
     let ignoredNames: Set<String> = .init(listOfNames)
 
