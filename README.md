@@ -84,6 +84,11 @@ import ExtensibleEnumKit
 }
 ```
 
+#### Note
+
+_You may need to add `nonisolated` for Swift usage due to the assumed isolation levels of Objective-C
+code within a Swift application._
+
 ### Complex Value Types
 
 Unlike traditional enums, ExtensibleEnumKit supports any value type:
@@ -109,6 +114,10 @@ public class NetworkEndpoint: NSObject {
     @objc static let local = NetworkEndpoint(host: "localhost", port: 8080, isSecure: false)
 }
 ```
+
+### Caveats
+
+ - **You may not use existing `NSObject` or `ExtensibleEnum` class/static property names as your enum cases**
 
 ### Extending in Other Files or Modules
 
