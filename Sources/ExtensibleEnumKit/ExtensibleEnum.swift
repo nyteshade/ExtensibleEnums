@@ -136,20 +136,12 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
       free(properties)
     }
 
-    var ignoredNames: Set<String> = [
-      "hash",
-      "superclass",
-      "description",
-      "debugDescription"
-    ]
+    let listOfNames = (
+      getStaticPropertyNames(for: NSObject.self) +
+      getStaticPropertyNames(for: ExtensibleEnum.self)
+    )
 
-    for propertyName in getStaticPropertyNames(for: NSObject.self) {
-      ignoredNames.update(with: propertyName)
-    }
-
-    for propertyName in getStaticPropertyNames(for: ExtensibleEnum.self) {
-      ignoredNames.update(with: propertyName)
-    }
+    let ignoredNames: Set<String> = .init(listOfNames)
 
     for i in 0..<Int(count) {
       let property = properties[i]
