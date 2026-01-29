@@ -113,7 +113,15 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
       "hash",
       "superclass",
       "description",
-      "debugDescription"
+      "debugDescription",
+      "allKeys",
+      "allValues",
+      "allKeysAndValues",
+      "subscript",
+      "count",
+      "value",
+      "enumerateKeysAndValues",
+      "enumarateValues"
     ]
 
     for i in 0..<Int(count) {
