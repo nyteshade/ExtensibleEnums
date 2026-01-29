@@ -240,7 +240,8 @@ Generates type-safe accessors for your extensible enum.
 - `static func allValues() -> [RawValue]` - All values (typed)
 - `static func allKeysAndValues() -> [String: RawValue]` - Complete mapping (typed)
 - `static subscript(key:) -> RawValue?` - Look up typed value by case name
-- `static var all` - Typed sequence for functional iteration
+- `static var allCases: [Self]` - All instances (like `CaseIterable`)
+- `static var all: ExtensibleEnumSequence<RawValue>` - Typed sequence for functional iteration
 
 ### `ExtensibleEnum` Base Class
 
@@ -257,10 +258,7 @@ The base class providing core functionality:
 - `class func allKeys() -> [String]` - All case names
 - `class func allValues() -> [Any]` - All values (type-erased)
 - `class func allKeysAndValues() -> [String: Any]` - Complete mapping (type-erased)
-- `class var allCases: [ExtensibleEnum]` - All instances (like `CaseIterable`)
-- `class var all` - Sequence for functional iteration
 - `class var count: Int` - Number of defined cases
-- `static subscript(key:) -> Any?` - Look up value by case name
 
 **Objective-C Convenience:**
 - `Class[@"key"]` - Subscript access to look up value by case name

@@ -6,14 +6,14 @@ import Foundation
 ///
 /// Use via the `all` property on any `ExtensibleEnum` subclass:
 /// ```swift
-/// Workers.all.filter { $0.age > 30 }.forEach { print($0.name) }
+/// Workers.all.filter { $0.value.age > 30 }.map { $0.key }
 /// ```
-public struct ExtensibleEnumSequence<EnumType: ExtensibleEnum, Value>: Sequence {
+public struct ExtensibleEnumSequence<Value>: Sequence {
   public typealias Element = (key: String, value: Value)
 
   private let keysAndValues: [String: Value]
 
-  init(keysAndValues: [String: Value]) {
+  public init(keysAndValues: [String: Value]) {
     self.keysAndValues = keysAndValues
   }
 
@@ -75,7 +75,7 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
   /// Creates a new instance with the given raw value.
   /// - Parameter rawValue: The underlying value to store.
   @objc
-  public required init(rawValue: Any) {
+  public init(rawValue: Any) {
     self.rawValue = rawValue
     super.init()
   }
@@ -150,19 +150,6 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
     return allKeysAndValues()[key]
   }
 
-  /// Returns all instances of this extensible enum (similar to `CaseIterable.allCases`).
-  ///
-  /// ```swift
-  /// for worker in Workers.allCases {
-  ///     print(worker.typedRawValue.name)
-  /// }
-  /// ```
-  open class var allCases: [ExtensibleEnum] {
-    return allValues().compactMap { value in
-      Self.init(rawValue: value)
-    }
-  }
-
   /// Returns the case name for this instance, or nil if not found.
   ///
   /// ```swift
@@ -181,21 +168,6 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
       }
     }
     return nil
-  }
-
-  /// Returns a sequence for functional iteration over all cases.
-  ///
-  /// ```swift
-  /// // Filter and map
-  /// let seniors = Workers.all.filter { $0.value.age > 50 }.map { $0.key }
-  ///
-  /// // Iterate with key and value
-  /// for (name, person) in Workers.all {
-  ///     print("\(name): \(person.age)")
-  /// }
-  /// ```
-  open class var all: ExtensibleEnumSequence<ExtensibleEnum, Any> {
-    return ExtensibleEnumSequence(keysAndValues: allKeysAndValues())
   }
 
   // MARK: - Objective-C Convenience Methods

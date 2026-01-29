@@ -19,7 +19,7 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
     return [
       "public typealias RawValue = \(raw: typeName)",
       """
-      public nonisolated required init?(rawValue: RawValue) {
+      public nonisolated init?(rawValue: RawValue) {
         super.init(rawValue: rawValue)
       }
 
@@ -44,12 +44,17 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
       /// Access a typed value by its case name.
       /// This shadows the base class subscript when called from Swift.
       public static subscript(key: String) -> RawValue? {
-        return allKeysAndValues()[key]
+        let untyped = (self as ExtensibleEnumProtocol.Type).allKeysAndValues()
+        return untyped[key] as? RawValue
+      }
+
+      /// Returns all instances of this extensible enum (similar to `CaseIterable.allCases`).
+      public static var allCases: [Self] {
+        return allValues().compactMap { Self.init(rawValue: $0) }
       }
 
       /// Returns a typed sequence for functional iteration.
-      /// This shadows the base class `all` when called from Swift.
-      public static var all: ExtensibleEnumSequence<Self, RawValue> {
+      public static var all: ExtensibleEnumSequence<RawValue> {
         return ExtensibleEnumSequence(keysAndValues: allKeysAndValues())
       }
       """
