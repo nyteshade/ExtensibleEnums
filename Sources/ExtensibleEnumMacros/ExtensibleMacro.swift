@@ -21,7 +21,7 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
       """
       @objc
       public nonisolated required init?(rawValue: RawValue) {
-        super.init(rawValue: rawValue)
+        super.init()
         self.rawValue = rawValue
       }
       """
