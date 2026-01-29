@@ -118,6 +118,7 @@ public class NetworkEndpoint: NSObject {
 ### Caveats
 
  - **You may not use existing `NSObject` or `ExtensibleEnum` class/static property names as your enum cases**
+ - **At this moment `@objcMembers` cannot be used to make writing enums nicer. (Work in progress)**
 
 ### Extending in Other Files or Modules
 
