@@ -1,6 +1,5 @@
 import Foundation
 
-// 1. Define a protocol to handle the generic extraction
 public protocol ExtensibleEnumProtocol {
   typealias RawValue = Any
 
@@ -8,7 +7,6 @@ public protocol ExtensibleEnumProtocol {
   static func allValues() -> [RawValue]
 }
 
-// 2. Implement the logic in a protocol extension
 public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
   static func allKeys() -> [String] {
     allKeysAndValues().keys.sorted()
@@ -22,7 +20,6 @@ public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
     var dict: [String: RawValue] = [:]
     var count: UInt32 = 0
 
-    // 1. Get the metaclass (statics live here)
     guard
       let metaClass = object_getClass(self),
       let properties = class_copyPropertyList(metaClass, &count)
@@ -41,8 +38,6 @@ public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
         continue
       }
 
-      // 3. Inspect Attributes (Optional but safer)
-      // This ensures it's a property the Obj-C runtime recognizes as such
       guard
         let attr = property_getAttributes(property),
         let _ = String(utf8String: attr)
@@ -50,9 +45,6 @@ public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
         continue
       }
 
-      // 4. Extract the value via KVC
-      // KVC handles the dynamic lookup of both 'static let' and 'static var'
-      // Use a do-catch or check respondsTo to avoid KVC exceptions if a key isn't KVC-compliant
       if let value = self.value(forKey: name) {
         dict[name] = value
       }
