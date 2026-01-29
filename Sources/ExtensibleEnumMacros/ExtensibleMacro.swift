@@ -14,6 +14,14 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
       return []
     }
 
+    // Extract the class name from the declaration
+    let className: String
+    if let classDecl = declaration.as(ClassDeclSyntax.self) {
+      className = classDecl.name.text
+    } else {
+      className = "Self" // Fallback, though this may cause issues
+    }
+
     let typeName = argument.description.replacingOccurrences(of: ".self", with: "").trimmingCharacters(in: .whitespaces)
 
     return [
@@ -49,8 +57,8 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
       }
 
       /// Returns all instances of this extensible enum (similar to `CaseIterable.allCases`).
-      public static var allCases: [Self] {
-        return allValues().compactMap { Self.init(rawValue: $0) }
+      public static var allCases: [\(raw: className)] {
+        return allValues().compactMap { \(raw: className).init(rawValue: $0) }
       }
 
       /// Returns a typed sequence for functional iteration.
