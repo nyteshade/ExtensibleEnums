@@ -30,18 +30,13 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
       /// Returns all values with concrete `RawValue` type.
       /// This shadows the base class `allValues() -> [Any]` when called from Swift.
       public static func allValues() -> [RawValue] {
-        let keysAndValues = allTypedKeysAndValues()
+        let keysAndValues = allKeysAndValues()
         return keysAndValues.keys.sorted().compactMap { keysAndValues[$0] }
       }
 
       /// Returns all keys and values with concrete `RawValue` type.
       /// This shadows the base class `allKeysAndValues() -> [String: Any]` when called from Swift.
       public static func allKeysAndValues() -> [String: RawValue] {
-        return allTypedKeysAndValues()
-      }
-
-      /// Returns the complete mapping with concrete value types.
-      public static func allTypedKeysAndValues() -> [String: RawValue] {
         // Runtime introspection, then cast values
         let untyped = (self as ExtensibleEnumProtocol.Type).allKeysAndValues()
         return untyped.compactMapValues { $0 as? RawValue }

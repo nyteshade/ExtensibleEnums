@@ -24,16 +24,14 @@ public protocol ExtensibleEnumProtocol {
 ///
 /// ## Example
 /// ```swift
-/// final class Priority: ExtensibleEnum, TypedExtensibleEnumProtocol {
-///   typealias RawValue = Int
-///
+/// @ExtensibleEnumeration(Int.self)
+/// @objc final class Priority: ExtensibleEnum, TypedExtensibleEnumProtocol {
 ///   @objc static let low = Priority(intValue: 0)
 ///   @objc static let high = Priority(intValue: 10)
-///
-///   var typedRawValue: Int { rawValue as! Int }
 /// }
 ///
 /// let value: Int = Priority.high.typedRawValue  // Type-safe
+/// let all: [Int] = Priority.allValues()         // Typed array
 /// ```
 public protocol TypedExtensibleEnumProtocol: ExtensibleEnumProtocol {
 
@@ -42,32 +40,4 @@ public protocol TypedExtensibleEnumProtocol: ExtensibleEnumProtocol {
 
   /// The strongly-typed raw value for this instance.
   var typedRawValue: RawValue { get }
-
-  /// Returns all values with their concrete type.
-  static func allTypedValues() -> [RawValue]
-
-  /// Returns the complete mapping with concrete value types.
-  static func allTypedKeysAndValues() -> [String: RawValue]
-}
-
-// MARK: - Default Implementations for Typed Protocol
-
-public extension TypedExtensibleEnumProtocol where Self: ExtensibleEnum {
-
-  /// Default implementation converting typed values to type-erased array.
-  static func allValues() -> [Any] {
-    return allTypedValues()
-  }
-
-  /// Default implementation deriving typed values from typed key-value map.
-  static func allTypedValues() -> [RawValue] {
-    return allTypedKeysAndValues().keys.sorted().compactMap {
-      allTypedKeysAndValues()[$0]
-    }
-  }
-
-  /// Default implementation converting typed map to type-erased map.
-  static func allKeysAndValues() -> [String: Any] {
-    return allTypedKeysAndValues().mapValues { $0 as Any }
-  }
 }
