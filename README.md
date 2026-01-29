@@ -158,10 +158,27 @@ ExtensibleEnumKit is fully compatible with Objective-C:
 ```objc
 // Objective-C usage
 NSArray<NSString *> *keys = [StatusCode allKeys];
+NSArray *values = [StatusCode allValues];
 NSDictionary<NSString *, id> *mapping = [StatusCode allKeysAndValues];
 
-StatusCode *status = StatusCode.ok;
-NSLog(@"Status: %@", status.rawValue);
+// Get count
+NSUInteger count = StatusCode.count;
+
+// Look up by case name
+id value = [StatusCode valueForCaseNamed:@"ok"];
+
+// Block-based enumeration with early exit
+[StatusCode enumerateKeysAndValuesUsingBlock:^(NSString *key, id value, BOOL *stop) {
+    NSLog(@"%@: %@", key, value);
+    if ([key isEqualToString:@"notFound"]) {
+        *stop = YES;  // Stop early
+    }
+}];
+
+// Enumerate values only
+[StatusCode enumerateValuesUsingBlock:^(id value, BOOL *stop) {
+    NSLog(@"%@", value);
+}];
 ```
 
 The `@objc` attribute on static properties is required for runtime discovery.
@@ -192,6 +209,10 @@ The base class providing core functionality:
 - `class func allKeys() -> [String]` - All case names
 - `class func allValues() -> [Any]` - All values (type-erased)
 - `class func allKeysAndValues() -> [String: Any]` - Complete mapping (type-erased)
+- `class var count: Int` - Number of defined cases
+- `class func value(forCaseNamed:) -> Any?` - Look up value by case name
+- `class func enumerateKeysAndValues(using:)` - Block-based enumeration with stop flag
+- `class func enumerateValues(using:)` - Block-based value enumeration with stop flag
 
 ### `TypedExtensibleEnumProtocol`
 

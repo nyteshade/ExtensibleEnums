@@ -95,4 +95,61 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
 
     return dict
   }
+
+  // MARK: - Objective-C Convenience Methods
+
+  /// Returns the number of defined cases.
+  @objc
+  open class var count: Int {
+    return allKeys().count
+  }
+
+  /// Returns the value for the given case name, or nil if not found.
+  /// - Parameter key: The case name to look up.
+  /// - Returns: The value associated with the key, or nil.
+  @objc(valueForCaseNamed:)
+  open class func value(forCaseNamed key: String) -> Any? {
+    return allKeysAndValues()[key]
+  }
+
+  /// Enumerates all cases, calling the block with each key and value.
+  ///
+  /// Example (Objective-C):
+  /// ```objc
+  /// [Workers enumerateKeysAndValuesUsingBlock:^(NSString *key, id value, BOOL *stop) {
+  ///     NSLog(@"%@: %@", key, value);
+  ///     if ([key isEqualToString:@"done"]) *stop = YES;
+  /// }];
+  /// ```
+  ///
+  /// - Parameter block: A block called for each key-value pair. Set `stop` to YES to halt enumeration.
+  @objc
+  open class func enumerateKeysAndValues(using block: (String, Any, UnsafeMutablePointer<ObjCBool>) -> Void) {
+    var stop: ObjCBool = false
+    let keysAndValues = allKeysAndValues()
+    for key in keysAndValues.keys.sorted() {
+      guard let value = keysAndValues[key] else { continue }
+      block(key, value, &stop)
+      if stop.boolValue { break }
+    }
+  }
+
+  /// Enumerates all values, calling the block with each value.
+  ///
+  /// Example (Objective-C):
+  /// ```objc
+  /// [Workers enumerateValuesUsingBlock:^(id value, BOOL *stop) {
+  ///     NSLog(@"%@", value);
+  /// }];
+  /// ```
+  ///
+  /// - Parameter block: A block called for each value. Set `stop` to YES to halt enumeration.
+  @objc
+  open class func enumerateValues(using block: (Any, UnsafeMutablePointer<ObjCBool>) -> Void) {
+    var stop: ObjCBool = false
+    for value in allValues() {
+      block(value, &stop)
+      if stop.boolValue { break }
+    }
+  }
 }
