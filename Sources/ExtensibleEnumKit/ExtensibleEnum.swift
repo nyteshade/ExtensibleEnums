@@ -141,6 +141,8 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
       getStaticPropertyNames(for: ExtensibleEnum.self)
     )
 
+    print(listOfNames)
+
     let ignoredNames: Set<String> = .init(listOfNames)
 
     for i in 0..<Int(count) {
