@@ -6,6 +6,7 @@ public protocol ExtensibleEnumProtocol {
 
   @objc static func allKeys() -> [String]
   @objc static func allValues() -> [RawValue]
+  @objc static func allKeysAndValues() -> [String: RawValue]
 }
 
 public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
