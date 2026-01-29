@@ -1,5 +1,48 @@
 import Foundation
 
+// MARK: - Sequence Wrapper
+
+/// A sequence wrapper that enables functional iteration over extensible enum cases.
+///
+/// Use via the `all` property on any `ExtensibleEnum` subclass:
+/// ```swift
+/// Workers.all.filter { $0.age > 30 }.forEach { print($0.name) }
+/// ```
+public struct ExtensibleEnumSequence<EnumType: ExtensibleEnum, Value>: Sequence {
+  public typealias Element = (key: String, value: Value)
+
+  private let keysAndValues: [String: Value]
+
+  init(keysAndValues: [String: Value]) {
+    self.keysAndValues = keysAndValues
+  }
+
+  public func makeIterator() -> AnyIterator<Element> {
+    var keys = keysAndValues.keys.sorted().makeIterator()
+    return AnyIterator {
+      guard let key = keys.next(), let value = self.keysAndValues[key] else {
+        return nil
+      }
+      return (key: key, value: value)
+    }
+  }
+
+  /// The number of cases.
+  public var count: Int {
+    return keysAndValues.count
+  }
+
+  /// All keys in sorted order.
+  public var keys: [String] {
+    return keysAndValues.keys.sorted()
+  }
+
+  /// All values in key-sorted order.
+  public var values: [Value] {
+    return keys.compactMap { keysAndValues[$0] }
+  }
+}
+
 // MARK: - Base Class
 
 /// Base class for extensible enumerations usable from Swift and Objective-C.
@@ -32,7 +75,7 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
   /// Creates a new instance with the given raw value.
   /// - Parameter rawValue: The underlying value to store.
   @objc
-  public init(rawValue: Any) {
+  public required init(rawValue: Any) {
     self.rawValue = rawValue
     super.init()
   }
@@ -96,6 +139,65 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
     return dict
   }
 
+  // MARK: - Swift Convenience Methods
+
+  /// Access a value by its case name.
+  ///
+  /// ```swift
+  /// let person = Workers["Brie"]  // Person?
+  /// ```
+  public static subscript(key: String) -> Any? {
+    return allKeysAndValues()[key]
+  }
+
+  /// Returns all instances of this extensible enum (similar to `CaseIterable.allCases`).
+  ///
+  /// ```swift
+  /// for worker in Workers.allCases {
+  ///     print(worker.typedRawValue.name)
+  /// }
+  /// ```
+  open class var allCases: [ExtensibleEnum] {
+    return allValues().compactMap { value in
+      Self.init(rawValue: value)
+    }
+  }
+
+  /// Returns the case name for this instance, or nil if not found.
+  ///
+  /// ```swift
+  /// let worker = Workers.Brie
+  /// print(worker.caseName)  // "Brie"
+  /// ```
+  open var caseName: String? {
+    let keysAndValues = Self.allKeysAndValues()
+    for (key, value) in keysAndValues {
+      if let enumValue = value as? NSObject, let selfValue = rawValue as? NSObject {
+        if enumValue.isEqual(selfValue) {
+          return key
+        }
+      } else if String(describing: value) == String(describing: rawValue) {
+        return key
+      }
+    }
+    return nil
+  }
+
+  /// Returns a sequence for functional iteration over all cases.
+  ///
+  /// ```swift
+  /// // Filter and map
+  /// let seniors = Workers.all.filter { $0.value.age > 50 }.map { $0.key }
+  ///
+  /// // Iterate with key and value
+  /// for (name, person) in Workers.all {
+  ///     print("\(name): \(person.age)")
+  /// }
+  /// ```
+  open class var all: ExtensibleEnumSequence<ExtensibleEnum, Any> {
+    return ExtensibleEnumSequence(keysAndValues: allKeysAndValues())
+  }
+
   // MARK: - Objective-C Convenience Methods
 
   /// Returns the number of defined cases.
@@ -109,6 +211,16 @@ open class ExtensibleEnum: NSObject, ExtensibleEnumProtocol {
   /// - Returns: The value associated with the key, or nil.
   @objc(valueForCaseNamed:)
   open class func value(forCaseNamed key: String) -> Any? {
+    return allKeysAndValues()[key]
+  }
+
+  /// Enables subscript access from Objective-C.
+  ///
+  /// ```objc
+  /// Person *person = Workers[@"Brie"];
+  /// ```
+  @objc
+  open class func object(forKeyedSubscript key: String) -> Any? {
     return allKeysAndValues()[key]
   }
 

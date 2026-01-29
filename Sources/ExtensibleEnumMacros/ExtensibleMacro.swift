@@ -40,6 +40,18 @@ public struct ExtensibleEnumerationMacro: MemberMacro {
         let untyped = (self as ExtensibleEnumProtocol.Type).allKeysAndValues()
         return untyped.compactMapValues { $0 as? RawValue }
       }
+
+      /// Access a typed value by its case name.
+      /// This shadows the base class subscript when called from Swift.
+      public static subscript(key: String) -> RawValue? {
+        return allKeysAndValues()[key]
+      }
+
+      /// Returns a typed sequence for functional iteration.
+      /// This shadows the base class `all` when called from Swift.
+      public static var all: ExtensibleEnumSequence<Self, RawValue> {
+        return ExtensibleEnumSequence(keysAndValues: allKeysAndValues())
+      }
       """
     ]
   }

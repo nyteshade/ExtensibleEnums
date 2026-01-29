@@ -137,6 +137,43 @@ let codes: [Int] = StatusCode.allValues()
 // Get key-value mapping (typed)
 let mapping: [String: Int] = StatusCode.allKeysAndValues()
 // ["ok": 200, "notFound": 404, "serverError": 500, "unauthorized": 401]
+
+// Subscript access by case name
+let code: Int? = StatusCode["ok"]  // 200
+
+// Get the case name from an instance
+let status = StatusCode.ok
+print(status.caseName)  // "ok"
+```
+
+### Functional Iteration
+
+Use the `all` property for Swift functional patterns:
+
+```swift
+// Iterate with key-value tuples
+for (name, endpoint) in Endpoints.all {
+    print("\(name): \(endpoint.host):\(endpoint.port)")
+}
+
+// Filter and map
+let secureHosts = Endpoints.all
+    .filter { $0.value.isSecure }
+    .map { $0.value.host }
+
+// Find first match
+let localEndpoint = Endpoints.all.first { $0.key == "local" }?.value
+```
+
+### CaseIterable-style Access
+
+Access enum instances directly (similar to `CaseIterable`):
+
+```swift
+// Get all instances
+for status in StatusCode.allCases {
+    print("\(status.caseName ?? "?"): \(status.typedRawValue)")
+}
 ```
 
 ### Accessing the Raw Value
@@ -164,7 +201,10 @@ NSDictionary<NSString *, id> *mapping = [StatusCode allKeysAndValues];
 // Get count
 NSUInteger count = StatusCode.count;
 
-// Look up by case name
+// Subscript access (preferred)
+id value = StatusCode[@"ok"];
+
+// Or method-based lookup
 id value = [StatusCode valueForCaseNamed:@"ok"];
 
 // Block-based enumeration with early exit
@@ -199,18 +239,32 @@ Generates type-safe accessors for your extensible enum.
 - `typedRawValue: RawValue` - Type-safe value accessor
 - `static func allValues() -> [RawValue]` - All values (typed)
 - `static func allKeysAndValues() -> [String: RawValue]` - Complete mapping (typed)
+- `static subscript(key:) -> RawValue?` - Look up typed value by case name
+- `static var all` - Typed sequence for functional iteration
 
 ### `ExtensibleEnum` Base Class
 
 The base class providing core functionality:
 
+**Properties:**
 - `rawValue: Any` - The underlying value (type-erased)
+- `caseName: String?` - The case name for this instance (reverse lookup)
+
+**Initializers:**
 - `init(rawValue:)` - Initialize with any value
+
+**Class Methods & Properties:**
 - `class func allKeys() -> [String]` - All case names
 - `class func allValues() -> [Any]` - All values (type-erased)
 - `class func allKeysAndValues() -> [String: Any]` - Complete mapping (type-erased)
+- `class var allCases: [ExtensibleEnum]` - All instances (like `CaseIterable`)
+- `class var all` - Sequence for functional iteration
 - `class var count: Int` - Number of defined cases
-- `class func value(forCaseNamed:) -> Any?` - Look up value by case name
+- `static subscript(key:) -> Any?` - Look up value by case name
+
+**Objective-C Convenience:**
+- `Class[@"key"]` - Subscript access to look up value by case name
+- `class func value(forCaseNamed:) -> Any?` - Method-based lookup by case name
 - `class func enumerateKeysAndValues(using:)` - Block-based enumeration with stop flag
 - `class func enumerateValues(using:)` - Block-based value enumeration with stop flag
 
