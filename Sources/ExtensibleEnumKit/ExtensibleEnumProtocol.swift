@@ -1,10 +1,11 @@
 import Foundation
 
+@objc
 public protocol ExtensibleEnumProtocol {
   typealias RawValue = Any
 
-  static func allKeys() -> [String]
-  static func allValues() -> [RawValue]
+  @objc static func allKeys() -> [String]
+  @objc static func allValues() -> [RawValue]
 }
 
 public extension ExtensibleEnumProtocol where Self: ExtensibleEnum {
