@@ -1,5 +1,5 @@
-@attached(member, names: named(RawValue), named(rawValue), named(init))
+@attached(member, names: named(RawValue), named(init), named(typedRawValue), named(allTypedKeysAndValues))
 public macro ExtensibleEnumeration<T>(_ type: T.Type) = #externalMacro(
-    module: "ExtensibleEnumMacros",     // This must match the 'macro.name' in Package.swift targets
-    type: "ExtensibleEnumerationMacro"  // This must match the 'struct' name in your Plugin list
+    module: "ExtensibleEnumMacros",
+    type: "ExtensibleEnumerationMacro"
 )
